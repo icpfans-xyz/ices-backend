@@ -15,7 +15,7 @@ Technology frameworks used in the ICES backend
 
 * [docker-compose.yaml](./docker-compose.yaml) Run docker container
 
-* [ices-sql](./db_ices.sql)SQL for database tables and views
+* [ices-sql](./db_ices.sql) SQL for database tables and views
 
 ## 🔗 Links
 
