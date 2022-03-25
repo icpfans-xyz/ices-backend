@@ -143,3 +143,21 @@ SELECT t.event_key,
 t.canister_id
 FROM t_event_logs_v1 t
 GROUP BY t.canister_id, t.event_key
+
+-- 9 View name------------
+-- v1_caller_event_count_7d
+--------------------------
+ SELECT a."time",
+COALESCE(c.counts, 0::bigint) AS counts,
+c.caller
+FROM ( SELECT to_char(b.b, 'YYYY-MM-DD'::text) AS "time"
+        FROM generate_series(CURRENT_TIMESTAMP - '6 days'::interval, CURRENT_TIMESTAMP, '1 day'::interval) b(b)
+      GROUP BY (to_char(b.b, 'YYYY-MM-DD'::text))
+      ORDER BY (to_char(b.b, 'YYYY-MM-DD'::text))) a
+  LEFT JOIN ( SELECT to_char(t_event_logs_v1.ices_time::timestamp with time zone, 'YYYY-MM-DD'::text) AS event_date,
+        count(DISTINCT t_event_logs_v1.id) AS counts,
+        t_event_logs_v1.caller
+        FROM t_event_logs_v1
+      GROUP BY t_event_logs_v1.caller, (to_char(t_event_logs_v1.ices_time::timestamp with time zone, 'YYYY-MM-DD'::text))
+      ORDER BY (to_char(t_event_logs_v1.ices_time::timestamp with time zone, 'YYYY-MM-DD'::text))) c ON a."time" = c.event_date
+
